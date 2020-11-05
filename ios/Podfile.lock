@@ -3,6 +3,8 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
+  - launch_review (0.0.1):
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - shared_preferences (0.0.1):
@@ -15,6 +17,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - launch_review (from `.symlinks/plugins/launch_review/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
@@ -27,6 +30,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  launch_review:
+    :path: ".symlinks/plugins/launch_review/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   shared_preferences:
@@ -39,6 +44,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  launch_review: 75d5a956ba8eaa493e9c9d4bf4c05e505e8d5ed0
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0

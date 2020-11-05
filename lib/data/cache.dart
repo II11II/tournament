@@ -1,19 +1,13 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Cache {
+mixin Cache {
   /// Static user token KEY
   static const String _token = "user_token";
 
-  /// Singleton
-  Cache._();
-
-  static final Cache _cache = Cache._();
-
-  factory Cache() => _cache;
 
   /// Initialising SharedPreference
   SharedPreferences _sharedPreferences;
-  Future get _shared async {
+  Future<SharedPreferences> get _shared async {
     if (_sharedPreferences == null)
       _sharedPreferences = await SharedPreferences.getInstance();
     return _sharedPreferences;

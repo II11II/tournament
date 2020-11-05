@@ -1,42 +1,21 @@
 part of 'login_cubit.dart';
 
-abstract class LoginState extends Equatable {
-  const LoginState();
-}
+class LoginState {
+  final String message;
 
-class LoginInitial extends LoginState {
-  const LoginInitial();
-
-  @override
-  List<Object> get props => [];
-}
-
-class LoginLoading extends LoginState {
-  const LoginLoading();
-
-  @override
-  List<Object> get props => [];
-}
-
-class LoginSuccess extends LoginState {
-  const LoginSuccess();
-
-  @override
-  List<Object> get props => [];
-}
-
-class LoginError extends LoginState {
-  final String errorMsg;
-
-  const LoginError(this.errorMsg);
-
-  @override
-  List<Object> get props => [errorMsg];
-}
-
-class LoginButtonInactive extends LoginState {
-  const LoginButtonInactive();
-
-  @override
-  List<Object> get props => [];
+  final bool isButtonActive;
+  final NetworkState networkState;
+  LoginState(
+      {this.networkState = NetworkState.INITIAL,
+     
+      this.message,
+      this.isButtonActive = false});
+  factory LoginState.copyWith(LoginState loginState,
+      {bool isButtonActive, String message, NetworkState networkState}) {
+    return LoginState(
+      message: message ?? loginState.message,
+      networkState: networkState ?? loginState.networkState,
+      isButtonActive: isButtonActive ?? loginState.isButtonActive,
+    );
+  }
 }

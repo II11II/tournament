@@ -1,49 +1,78 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/widgets.dart';
+import 'package:tournament/exception/exception.dart';
 import 'package:tournament/repository/repository.dart';
+import 'package:tournament/ui/state/network_state.dart';
 
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit() : super(LoginInitial());
-  final Repository repository = Repository();
+  LoginCubit() : super(LoginState());
+  final Repository repository = Repository.instance;
+  final loginField = TextEditingController();
+  final passwordField = TextEditingController();
 
-  Future login(String login, String password) async {
+  Future login() async {
     try {
-      emit(LoginLoading());
-      await Future.delayed(Duration(seconds: 5));
+      emit(LoginState.copyWith(state, networkState: NetworkState.LOADING));
 
-      /// request to login
-      /// result=await repository.login(login,password);
-      if (true) {
-        emit(LoginSuccess());
-      } else {
-        emit(LoginError("errorMsg"));
-      }
-    } on Exception {
-      emit(LoginError("errorMsg"));
+      String token =
+          await repository.login(loginField.text, passwordField.text);
+      await repository.setUserToken(token);
+
+      emit(LoginState.copyWith(state, networkState: NetworkState.LOADED));
+    } on InvalidLoginPasswordException catch (e) {
+      print(e);
+      emit(LoginState.copyWith(state,
+          networkState: NetworkState.INVALID_CREDENTIALS,
+          message: "invalid_credentials".tr()));
+    } on ServerErrorException catch (e) {
+      print(e);
+
+      emit(LoginState.copyWith(state,
+          networkState: NetworkState.INVALID_CREDENTIALS,
+          message: "server_error".tr()));
+    } on SocketException catch (e) {
+      print(e);
+
+      emit(LoginState.copyWith(state,
+          networkState: NetworkState.INVALID_CREDENTIALS,
+          message: "no_connection".tr()));
+    } on Exception catch (e) {
+      print(e);
+
+      emit(LoginState.copyWith(state,
+          networkState: NetworkState.INVALID_CREDENTIALS,
+          message: "unknown_error".tr()));
     }
   }
 
   String loginFieldValidator(String text) {
-    print(text);
-    if (true) {
-      emit(LoginInitial());
+    loginActivate();
+    if (text.isNotEmpty) {
       return null;
     } else {
-      emit(LoginButtonInactive());
-      return 'errorMsg';
+      return 'login_validation_info.length'.tr();
     }
   }
 
-  String passwordFieldValidator(String text) {
-    print(text);
-    if (true) {
-      emit(LoginInitial());
+  String passwordFieldValidator(String password) {
+    loginActivate();
+    if(password.isNotEmpty)
       return null;
-    } else {
-      emit(LoginButtonInactive());
-      return 'errorMsg';
-    }
+    else return "password_validation_info.non_empty".tr();
+  }
+
+  void loginActivate() {
+    if (loginField.text.isNotEmpty
+        //  &&
+        //     RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$').hasMatch(passwordField.text)
+        )
+      emit(LoginState.copyWith(state, isButtonActive: true));
+    else
+      emit(LoginState.copyWith(state, isButtonActive: false));
   }
 }

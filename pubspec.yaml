@@ -24,8 +24,12 @@ dependencies:
   flutter_bloc: ^6.0.1
   bloc: ^6.0.1
   equatable: ^1.2.3
-
-
+#  logging
+  logger:
+#  formatter
+  intl:
+# open app and play stores
+  launch_review: ^2.0.0
 
 
 
@@ -49,11 +53,17 @@ flutter:
 
   uses-material-design: true
   assets:
-    - assets/translations/
-    - assets/images/
-
-
-
+    - assets/images/click_logo.png
+    - assets/images/future_development_logo.png
+    - assets/images/login_background.png
+    - assets/images/logo.png
+    - assets/images/pay_me_logo.png
+    - assets/images/sign_up_background.png
+    - assets/images/soft_club_logo.png
+    - assets/images/splash_background.png
+    - assets/translations/en.json
+    - assets/translations/ru.json
+    - assets/translations/uz.json
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

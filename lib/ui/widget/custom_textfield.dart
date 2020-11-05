@@ -7,12 +7,13 @@ final String Function(String) validator;
 final bool autoValidate;
 final String hintText;
 final bool obscureText;
-  const CustomTextField({Key key, this.controller, this.textInputType, this.obscureText, this.validator, this.hintText, this.autoValidate}) : super(key: key);
+final Function onChanged;
+  const CustomTextField({Key key, this.controller, this.textInputType, this.obscureText, this.validator, this.hintText, this.autoValidate, this.onChanged}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-
+      onChanged: onChanged,
       obscureText: obscureText??false,
       keyboardType: textInputType,
       validator: validator,

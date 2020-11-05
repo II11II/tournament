@@ -1,22 +1,23 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tournament/ui/page/home_page/home_page.dart';
+import 'package:tournament/ui/page/forget_password_page/forget_password_cubit.dart';
+import 'package:tournament/ui/page/forget_password_page/forget_password_page.dart';
 import 'package:tournament/ui/page/login_page/login_cubit.dart';
 import 'package:tournament/ui/page/main_page/main_page.dart';
 import 'package:tournament/ui/page/sign_up_page/sign_up_cubit.dart';
 import 'package:tournament/ui/page/sign_up_page/sign_up_page.dart';
+import 'package:tournament/ui/state/network_state.dart';
 import 'package:tournament/ui/widget/custom_button.dart';
 import 'package:tournament/ui/widget/custom_textfield.dart';
 import 'package:tournament/ui/widget/pop_up.dart';
 
 class LoginPage extends StatelessWidget {
-  final loginField = TextEditingController();
-  final passwordField = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
+    var bloc = context.bloc<LoginCubit>();
     return Scaffold(
         resizeToAvoidBottomInset: true,
         body: Container(
@@ -48,8 +49,9 @@ class LoginPage extends StatelessWidget {
                       CustomTextField(
                         hintText: 'login'.tr(),
                         autoValidate: true,
+                        controller: bloc.loginField,
                         validator:
-                            context.bloc<LoginCubit>().loginFieldValidator,
+                            bloc.loginFieldValidator,
                       ),
                       SizedBox(
                         height: 8,
@@ -58,30 +60,45 @@ class LoginPage extends StatelessWidget {
                         autoValidate: true,
                         hintText: 'password'.tr(),
                         textInputType: TextInputType.visiblePassword,
+                        controller: bloc.passwordField,
                         obscureText: true,
                         validator:
-                            context.bloc<LoginCubit>().passwordFieldValidator,
+                            bloc.passwordFieldValidator,
                       ),
                       SizedBox(
                         height: 20,
                       ),
                       BlocConsumer<LoginCubit, LoginState>(
-                        listener: (context, state) {
-                          if (state is LoginSuccess) {
+                        listener: (context, state) async {
+                          if (state.networkState == NetworkState.LOADED) {
                             Navigator.of(context, rootNavigator: true).pop();
                             Navigator.pushReplacement(
                                 context,
                                 CupertinoPageRoute(
                                     builder: (BuildContext context) =>
                                         MainPage()));
-                          } else if (state is LoginError) {
-                          } else if (state is LoginLoading) {
+                          } else if (state.networkState ==
+                              NetworkState.INVALID_CREDENTIALS) {
+                            if (Navigator.of(context, rootNavigator: true)
+                                .canPop())
+                              Navigator.of(context, rootNavigator: true).pop();
+                            showMessage(context, 'Error', FeatherIcons.x,
+                                iconColor: Colors.redAccent);
+                          } else if (state.networkState ==
+                              NetworkState.LOADING) {
                             showLoading(context);
-                          } else {}
+                          } else {
+                            if (Navigator.of(context, rootNavigator: true)
+                                .canPop())
+                              Navigator.of(context, rootNavigator: true).pop();
+                            showMessage(context, 'Error', FeatherIcons.x);
+                          }
                         },
-                        buildWhen: (p, c) => c != p,
+                        listenWhen: (p,c)=>p.networkState!=c.networkState,
+
+                        buildWhen: (p, c) => c.isButtonActive != p.isButtonActive,
                         builder: (context, state) => CustomButton(
-                          colors: state is LoginButtonInactive
+                          colors: !state.isButtonActive
                               ? [
                                   Colors.grey,
                                   Colors.grey,
@@ -89,11 +106,10 @@ class LoginPage extends StatelessWidget {
                               : null,
                           height: 55,
                           text: "log_in".tr(),
-                          onPressed: state is LoginButtonInactive
+                          onPressed: !state.isButtonActive
                               ? null
                               : () {
-                                  context.bloc<LoginCubit>().login(
-                                      loginField.text, passwordField.text);
+                                  context.bloc<LoginCubit>().login();
                                 },
                         ),
                       )
@@ -112,12 +128,30 @@ class LoginPage extends StatelessWidget {
   Widget signUp(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: FittedBox(fit:BoxFit.contain ,
+      child: FittedBox(
+        fit: BoxFit.contain,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              OutlineButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (BuildContext context) => BlocProvider(
+                                create: (context) => ForgetPasswordCubit(),
+                                child: ForgetPasswordPage())));
+                  },
+                  color: Colors.white.withAlpha(100),
+                  child: Text(
+                    "${'forget_password'.tr()} ?",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  )),
               Text(
                 "not_registered".tr(),
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
