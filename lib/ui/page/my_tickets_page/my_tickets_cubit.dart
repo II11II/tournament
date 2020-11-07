@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:tournament/exception/exception.dart';
+import 'package:tournament/model/favourite.dart';
 import 'package:tournament/model/ticket.dart';
 import 'package:tournament/repository/repository.dart';
 import 'package:tournament/ui/state/network_state.dart';
@@ -16,7 +17,7 @@ class MyTicketsCubit extends Cubit<MyTicketsState> {
   Future getMyTickets() async {
     try {
       emit(state.copyWith(state: NetworkState.LOADING));
-      List<Ticket> tickets = await repository.tickets();
+      List<Favourites> tickets = await repository.tickets();
       emit(state.copyWith(state: NetworkState.LOADED,myTickets: tickets));
 
     }

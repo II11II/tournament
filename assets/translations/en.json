@@ -23,8 +23,8 @@
   "pubg_arena": "PUBG ARENA",
   "my_tickets": "My Tickets",
   "forget_password": "Forget password",
-  "withdraw_info": "WIDTHRAW INFO",
-  "card_id": "CARD ID:",
+  "withdraw_info": "WITHDRAW INFO",
+  "card_id": "CARD NUMBER:",
   "card_holder": "CARD HOLDER:",
   "withdraw_amount": "WIDTHRAW AMOUNT:",
   "balance": "Balance",
@@ -39,8 +39,9 @@
   "save_settings": "Save settings",
   "about_the_match": "About the match",
   "en": "English",
-  "ru": "Russian",
-  "uz": "Uzbek",
+  "ru": "Русский",
+  "uz": "O'zbek tili",
+  "next": "Next",
   "password_validation_info": {
     "capital_letter": "Should contain at least one capital letter",
     "small_letter": "Should contain at least one small letter",
@@ -58,16 +59,17 @@
   "prizes": "Prizes",
   "per_kill": "PER KILL",
   "top_10": "TOP 10",
-
   "winner_gets": "WINNER GETS",
   "get_ticket_now": "GET A TICKET NOW",
   "buy_now": "BUY NOW",
   "total_payment": "Total payment",
   "payment_option": "Payment option",
   "email_validation_info": "Enter valid email",
- "password_not_matching": "Passwords don't match",
+  "password_not_matching": "Passwords don't match",
   "server_error": "Server error",
   "user_exist": "User already exists",
   "unknown_error": "Unknown error :(",
-  "favourite_tournaments": "Favourite tournaments"
+  "favourite_tournaments": "Favourite tournaments",
+  "ticket": "Ticket"
+
 }

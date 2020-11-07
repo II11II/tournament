@@ -45,12 +45,16 @@ class SignUpPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'sign_up'.tr(),
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .headline3,
+                      FittedBox(
+                        child
+                            : Text(
+                          'sign_up'.tr(),
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .headline3,
+                        ),
                       ),
                       SizedBox(
                         height: 16,

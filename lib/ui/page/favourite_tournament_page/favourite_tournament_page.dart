@@ -50,7 +50,7 @@ class FavouriteTournamentPage extends StatelessWidget {
             return body(context);
           else if (state.networkState == NetworkState.NO_CONNECTION)
             return NoConnection(
-              onPressed: context.bloc<FavouriteTournamentCubit>().init(),
+              onPressed: context.bloc<FavouriteTournamentCubit>().init,
             );
           else
             return Container();
@@ -64,21 +64,24 @@ class FavouriteTournamentPage extends StatelessWidget {
     return GridView.builder(
       itemCount: bloc.state.favouriteTournaments.length,
       itemBuilder: (BuildContext context, int index) {
-        return MatchCard(
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return BlocProvider(
-                  create: (BuildContext context) => MatchCubit(
-                      bloc.state.favouriteTournaments[index].tournament),
-                  child: MatchPage());
-            }));
-          },
-          tournament: bloc.state.favouriteTournaments[index].tournament,
+        return FittedBox(
+          child: MatchCard(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return BlocProvider(
+                    create: (BuildContext context) => MatchCubit(
+                        bloc.state.favouriteTournaments[index].tournament),
+                    child: MatchPage());
+              }));
+            },
+            tournament: bloc.state.favouriteTournaments[index].tournament,
+          ),
         );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
+        childAspectRatio: 1/1.3
       ),
     );
   }

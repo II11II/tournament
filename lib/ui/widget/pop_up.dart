@@ -17,7 +17,6 @@ showLoading(BuildContext context) async {
 
 showMessage(BuildContext context, String title, IconData iconData,
     {Color iconColor, Function onPressed}) async {
-
   await showDialog(
       context: context,
       child: SimpleDialog(
@@ -52,20 +51,28 @@ showMessage(BuildContext context, String title, IconData iconData,
       ));
 }
 
-showTicket(BuildContext context, String title, IconData iconData,
-    {Color iconColor, Function onPressed}) async {
+showTicket(BuildContext context,String  matchId,String password,String instruction,
+    { Function onPressed}) async {
   await showDialog(
       context: context,
       child: SimpleDialog(
         contentPadding: EdgeInsets.all(0),
+
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        title: Text("match_ticket".tr()),
+        title: Center(child: Text("match_ticket".tr(),style: Style.bodyText2,)),
         children: [
-          Text("${"match_id".tr()}:"),
-          Text("${"password".tr()}:"),
-          Text("${"match_instructions".tr()}:"),
-          Text("Lorem ipsumLorem ipsumLorem ipsumLorem "
-              "ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsum"),
+          SizedBox(
+            height: 8,
+          ),
+          Text("${"match_id".tr()}:",style:Style.defaultText ,),
+          Text("$matchId:",style:Style.smallText ,),
+          Text("${"password".tr()}:",style:Style.defaultText),
+          Text("$password:",style:Style.smallText ,),
+
+          Text("${"match_instructions".tr()}:",style:Style.defaultText),
+          Text("$instruction:",style:Style.smallText ,),
+
+
           SizedBox(
             height: 30,
           ),
@@ -224,7 +231,9 @@ showLocalization(
                               color: ColorApp.bottomNavigationBarColor,
                               style: BorderStyle.solid),
                           borderRadius: BorderRadius.circular(8))),
-                  onChanged: (locale) => curLocale = locale,
+                  onChanged: (locale) {
+                    curLocale = locale;
+                  },
                   hint: Text(
                     context.locale.languageCode.tr(),
                     style: TextStyle(color: Colors.white),
@@ -251,7 +260,8 @@ showLocalization(
                 ),
                 width: double.infinity,
                 onPressed: () {
-                  context.locale ??= curLocale;
+                  if (curLocale != null) context.locale = curLocale;
+
                   Navigator.of(context, rootNavigator: true).pop();
                 },
               )

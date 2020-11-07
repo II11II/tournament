@@ -6,9 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:tournament/exception/exception.dart';
 import 'package:tournament/repository/repository.dart';
 import 'package:tournament/ui/state/network_state.dart';
-
 part 'match_card_state.dart';
-
 class MatchCardCubit extends Cubit<MatchCardState> {
   MatchCardCubit() : super(MatchCardState());
   final Repository repository = Repository.instance;

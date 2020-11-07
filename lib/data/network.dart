@@ -148,13 +148,13 @@ mixin Network {
       throw ServerErrorException(response.body);
   }
 
-  Future<List<Ticket>> tickets() async {
+  Future<List<Favourites>> tickets() async {
     http.Response response =
         await http.get("$_url/api/ticket/", headers: await _header());
 
     if (response.statusCode == 200) {
       List tournament = json.decode(response.body);
-      return List<Ticket>.from(tournament.map((e) => Ticket.fromJson(e)));
+      return List<Favourites>.from(tournament.map((e) => Favourites.fromJson(e)));
     } else if (response.statusCode == 401) {
       throw InvalidTokenException(response.body);
     } else

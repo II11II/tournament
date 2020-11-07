@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tournament/model/tournament.dart';
 import 'package:tournament/ui/page/entry_point/entry_point.dart';
@@ -15,16 +16,18 @@ import '../pop_up.dart';
 class MatchCard extends StatelessWidget {
   final Function onPressed;
   final Tournament tournament;
+final String buttonTitle;
   final bloc = MatchCardCubit();
-
+final log=Logger();
   MatchCard({
     Key key,
     this.onPressed,
-    this.tournament,
+    this.tournament, this.buttonTitle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+      log.d( bloc.state.isLiked,"is liked ?");
     bloc.state.isLiked = tournament.isFavourite;
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -35,25 +38,28 @@ class MatchCard extends StatelessWidget {
             child: Stack(
               fit: StackFit.loose,
               children: [
-                CachedNetworkImage(
-                  imageUrl: tournament.image,
-                  width: 150,
-                  height: 150,
-                  fit: BoxFit.cover,
-                  placeholder: (context, text) {
-                    return Shimmer.fromColors(
-                      baseColor: Colors.red,
-                      highlightColor: Colors.yellow,
-                      enabled: true,
-                      child: Container(
-                        height: 150,
-                        width: 150,
-                      ),
-                    );
-                  },
+                GestureDetector(
+                  onTap: onPressed,
+                  child: CachedNetworkImage(
+                    imageUrl: tournament.image,
+                    width: 150,
+                    height: 150,
+                    fit: BoxFit.cover,
+                    placeholder: (context, text) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.red,
+                        highlightColor: Colors.yellow,
+                        enabled: true,
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                        ),
+                      );
+                    },
 //                  color: Theme.of(context).appBarTheme.color.withAlpha(10),
-                  progressIndicatorBuilder: (context, text, d) => Center(
-                    child: CircularProgressIndicator(),
+                    progressIndicatorBuilder: (context, text, d) => Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
                 ),
                 Positioned(
@@ -111,6 +117,7 @@ class MatchCard extends StatelessWidget {
                                 },
                                 cubit: bloc,
                                 builder: (context, state) {
+
                                   if (state.networkState ==
                                           NetworkState.LOADED &&
                                       state.isLiked)
@@ -188,7 +195,7 @@ class MatchCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'get_ticket'.tr(),
+                   buttonTitle?? 'get_ticket'.tr(),
                     style: Style.smallText.copyWith(color: Colors.blueAccent),
                   ),
                 ),

@@ -8,6 +8,7 @@ class Tournament {
     this.id,
     this.isFavourite,
     this.players,
+    this.matchId,
     this.prizes,
     this.name,
     this.slug,
@@ -24,6 +25,7 @@ class Tournament {
   });
 
   int id;
+  String matchId;
   bool isFavourite;
   List<Player> players;
   List<Prize> prizes;
@@ -41,6 +43,7 @@ class Tournament {
   int maxPlayers;
 
   Tournament copyWith({
+    String matchId,
     int id,
     bool isFavourite,
     List<Player> players,
@@ -59,6 +62,7 @@ class Tournament {
     int maxPlayers,
   }) =>
       Tournament(
+        matchId: matchId ?? this.matchId,
         isFavourite: isFavourite ?? this.isFavourite,
         id: id ?? this.id,
         players: players ?? this.players,
@@ -82,11 +86,13 @@ class Tournament {
 
   String toRawJson() => json.encode(toJson());
 
-  factory Tournament.fromJson(Map<String, dynamic> json) => Tournament(
+  factory Tournament.fromJson(Map<String, dynamic> json) =>
+      Tournament(
         id: json["id"],
+        matchId: json["match_id"],
         isFavourite: json['is_favorite'],
         players:
-            List<Player>.from(json["players"].map((x) => Player.fromJson(x))),
+        List<Player>.from(json["players"].map((x) => Player.fromJson(x))),
         prizes: List<Prize>.from(json["prizes"].map((x) => Prize.fromJson(x))),
         name: json["name"],
         slug: json["slug"],
@@ -102,8 +108,10 @@ class Tournament {
         maxPlayers: json["max_players"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "id": id,
+        "match_id":matchId,
         "is_favorite": isFavourite,
         "players": List<dynamic>.from(players.map((x) => x.toJson())),
         "prizes": List<dynamic>.from(prizes.map((x) => x.toJson())),

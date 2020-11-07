@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tournament/ui/page/entry_point/entry_point.dart';
 import 'package:tournament/ui/page/favourite_tournament_page/favourite_tournament_cubit.dart';
 import 'package:tournament/ui/page/favourite_tournament_page/favourite_tournament_page.dart';
-import 'package:tournament/ui/page/match_page/match_page.dart';
 import 'package:tournament/ui/page/my_tickets_page/my_tickets_cubit.dart';
 import 'package:tournament/ui/state/network_state.dart';
 import 'package:tournament/ui/widget/match_card/match_card.dart';
@@ -69,7 +68,6 @@ class MyTicketsPage extends StatelessWidget {
           context,
           MaterialPageRoute(
               fullscreenDialog: true,
-
               builder: (BuildContext context) => BlocProvider(
                   create: (BuildContext context) =>
                       FavouriteTournamentCubit()..init(),
@@ -80,18 +78,24 @@ class MyTicketsPage extends StatelessWidget {
 
   Widget body(BuildContext context) {
     var bloc = context.bloc<MyTicketsCubit>();
-    return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        shrinkWrap: true,
-        itemCount: bloc.state.myTickets.length,
-        itemBuilder: (context, index) {
-          return FittedBox(
-              child: MatchCard(
-            onPressed: () => Navigator.push(
-                context, CupertinoPageRoute(builder: (c) => MatchPage())),
-          ));
-        });
+    return RefreshIndicator(
+      onRefresh: () async=>await bloc.getMyTickets(),
+      child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, childAspectRatio: 1 / 1.3),
+          shrinkWrap: true,
+          itemCount: bloc.state.myTickets.length,
+          itemBuilder: (context, index) {
+            return FittedBox(
+                child: MatchCard(
+              tournament: bloc.state.myTickets[index].tournament,
+              buttonTitle: "ticket".tr(),
+              onPressed: () {
+                var info=bloc.state.myTickets[index].tournament;
+              showTicket(context,info.matchId,info.password,info.instructions);
+              },
+            ));
+          }),
+    );
   }
 }
