@@ -82,7 +82,7 @@ class LoginPage extends StatelessWidget {
                             if (Navigator.of(context, rootNavigator: true)
                                 .canPop())
                               Navigator.of(context, rootNavigator: true).pop();
-                            showMessage(context, 'Error', FeatherIcons.x,
+                            showMessage(context, state.message, FeatherIcons.x,
                                 iconColor: Colors.redAccent);
                           } else if (state.networkState ==
                               NetworkState.LOADING) {
@@ -91,7 +91,7 @@ class LoginPage extends StatelessWidget {
                             if (Navigator.of(context, rootNavigator: true)
                                 .canPop())
                               Navigator.of(context, rootNavigator: true).pop();
-                            showMessage(context, 'Error', FeatherIcons.x);
+                            showMessage(context, state.message, FeatherIcons.x);
                           }
                         },
                         listenWhen: (p,c)=>p.networkState!=c.networkState,

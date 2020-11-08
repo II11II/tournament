@@ -42,7 +42,7 @@ class MyTicketsCubit extends Cubit<MyTicketsState> {
       log.d(e);
     } on Exception catch (e) {
       emit(state.copyWith(
-          message: "unknown".tr(), state: NetworkState.UNKNOWN_ERROR));
+          message: "unknown_error".tr(), state: NetworkState.UNKNOWN_ERROR));
 
       log.d(e);
     }

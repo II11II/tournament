@@ -7,9 +7,12 @@ import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tournament/ui/page/entry_point/entry_point.dart';
 import 'package:tournament/ui/page/match_page/match_cubit.dart';
+import 'package:tournament/ui/state/network_state.dart';
 import 'package:tournament/ui/style/color.dart';
 import 'package:tournament/ui/widget/custom_button.dart';
+import 'package:tournament/ui/widget/pop_up.dart';
 
 class MatchPage extends StatefulWidget {
   @override
@@ -42,7 +45,9 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
   }
 
   Widget body(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    var size = MediaQuery
+        .of(context)
+        .size;
     var bloc = context.bloc<MatchCubit>();
 
     return Column(
@@ -73,7 +78,61 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                 children: [
                   Text('${bloc.state.tournament.cost}'),
                   IconButton(
-                    icon: Icon(FeatherIcons.heart),
+                    onPressed: bloc.likePress,
+                    icon: BlocConsumer<MatchCubit, MatchState>(
+                        listenWhen: (p, c) => p.networkState != c.networkState,
+                        listener: (context, state) {
+                          if (state.networkState ==
+                              NetworkState.LOADED || state.networkState ==
+                              NetworkState.LOADING) {} else
+                          if (state.networkState ==
+                              NetworkState.INVALID_TOKEN) {
+                            showMessage(context, state.message,
+                                Icons.report_problem_outlined,
+                                iconColor: Colors.red,
+                                onPressed: () =>
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                EntryPoint())));
+                          } else {
+                            showMessage(context, state.message,
+                                Icons.report_problem_outlined,
+                                iconColor: Colors.red);
+                          }
+                        },
+                        builder: (context, MatchState state) {
+                          if (state.networkState ==
+                              NetworkState.LOADED &&
+                              state.isLiked)
+                            return Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            );
+                          else if (state.networkState ==
+                              NetworkState.LOADED &&
+                              state.isLiked)
+                            return Icon(
+                              Icons.favorite_border,
+                              color: Colors.white,
+                            );
+                          else if (state.networkState ==
+                              NetworkState.LOADING)
+                            return Container();
+                          else {
+                            if (state.isLiked)
+                              return Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                              );
+                            else
+                              return Icon(
+                                Icons.favorite_border,
+                                color: Colors.white,
+                              );
+                          }
+                        }),
                   )
                 ],
               ),
@@ -89,46 +148,48 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _title(context, 'about_the_match'.tr(),
-                      () => bloc.expandDescription()),
+                          () => bloc.expandDescription()),
                   BlocBuilder<MatchCubit, MatchState>(
-                    builder: (context, MatchState state) => AnimatedCrossFade(
-                      firstChild: Text(
-                        '${bloc.state.tournament.description}',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w300),
-                        maxLines: 3,
-                      ),
-                      secondChild: Text(
-                        '${bloc.state.tournament.description}',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w300),
-                      ),
-                      crossFadeState: !state.isDescriptionExpanded
-                          ? CrossFadeState.showFirst
-                          : CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 500),
-                    ),
+                    builder: (context, MatchState state) =>
+                        AnimatedCrossFade(
+                          firstChild: Text(
+                            '${bloc.state.tournament.description}',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                            maxLines: 3,
+                          ),
+                          secondChild: Text(
+                            '${bloc.state.tournament.description}',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                          ),
+                          crossFadeState: !state.isDescriptionExpanded
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          duration: Duration(milliseconds: 500),
+                        ),
                   ),
                   _title(context, 'match_instructions'.tr(),
-                      () => bloc.expandInstruction()),
+                          () => bloc.expandInstruction()),
                   BlocBuilder<MatchCubit, MatchState>(
-                    builder: (context, MatchState state) => AnimatedCrossFade(
-                      firstChild: Text(
-                        '${bloc.state.tournament.instructions}',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w300),
-                        maxLines: 3,
-                      ),
-                      secondChild: Text(
-                        '${bloc.state.tournament.instructions}',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w300),
-                      ),
-                      crossFadeState: !state.isInstructionExpanded
-                          ? CrossFadeState.showFirst
-                          : CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 500),
-                    ),
+                    builder: (context, MatchState state) =>
+                        AnimatedCrossFade(
+                          firstChild: Text(
+                            '${bloc.state.tournament.instructions}',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                            maxLines: 3,
+                          ),
+                          secondChild: Text(
+                            '${bloc.state.tournament.instructions}',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                          ),
+                          crossFadeState: !state.isInstructionExpanded
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          duration: Duration(milliseconds: 500),
+                        ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
@@ -142,8 +203,8 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       for (var i = 0;
-                          i < bloc.state.tournament.prizes.length;
-                          i++)
+                      i < bloc.state.tournament.prizes.length;
+                      i++)
                         Expanded(
                           child: Column(
                             children: [
@@ -164,7 +225,9 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  '${bloc.state.tournament.prizes[i].price.toInt()}\nUZS\n${'${bloc.state.nameTournament[i]}'.tr()}',
+                                  '${bloc.state.tournament.prizes[i].price
+                                      .toInt()}\nUZS\n${'${bloc.state
+                                      .nameTournament[i]}'.tr()}',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: ColorApp.blueAccent,
@@ -212,9 +275,9 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                             elevation: 10,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              topRight: Radius.circular(16),
-                            )),
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
+                                )),
                             builder: (BuildContext context) {
                               return Padding(
                                 padding: const EdgeInsets.only(
@@ -222,7 +285,7 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Text('get_ticket_now'.tr()),
                                     Padding(
@@ -230,16 +293,16 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                                           vertical: 16),
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceEvenly,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text('total_payment'.tr()),
                                                 FittedBox(child: Text('UZS 20'))
@@ -254,7 +317,7 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                                             padding: const EdgeInsets.all(8.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
+                                              MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 Card(
                                                   color: ColorApp
@@ -262,12 +325,12 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                                                       .withBlue(40),
                                                   shape: RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              8)),
+                                                      BorderRadius.circular(
+                                                          8)),
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
+                                                    const EdgeInsets.all(
+                                                        8.0),
                                                     child: Image.asset(
                                                         'assets/images/pay_me_logo.png'),
                                                   ),
@@ -323,7 +386,11 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
         FlatButton(
           child: Text(
             'more_info'.tr(),
-            style: Theme.of(context).textTheme.button.copyWith(
+            style: Theme
+                .of(context)
+                .textTheme
+                .button
+                .copyWith(
                 fontWeight: FontWeight.w700, color: ColorApp.blueAccent),
           ),
           onPressed: onPressed,
@@ -347,12 +414,12 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
         ),
         Container(
             child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            '${bloc.state.tournament.name}',
-            style: TextStyle(),
-          ),
-        ))
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                '${bloc.state.tournament.name}',
+                style: TextStyle(),
+              ),
+            ))
       ],
     );
   }
