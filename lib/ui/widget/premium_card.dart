@@ -5,12 +5,9 @@ import 'package:tournament/ui/page/home_page/home_cubit.dart';
 import 'package:tournament/ui/style/style.dart';
 
 class PremiumCard extends StatelessWidget {
-
   final Function onPressed;
 
-  const PremiumCard(
-      {Key key, this.onPressed})
-      : super(key: key);
+  const PremiumCard({Key key, this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +47,10 @@ class PremiumCard extends StatelessWidget {
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(8)),
                       child: Padding(
-                          padding: const EdgeInsets.all(5.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "premium".tr(),
-                            style: Style.defaultText,
+                            "premium".tr().toUpperCase(),
+                            style: Style.smallText,
                           )),
                     ),
                     Padding(
@@ -65,7 +62,7 @@ class PremiumCard extends StatelessWidget {
                     ),
                     Text(
                       // '13 Aug / 20:00',
-                      '${DateFormat.Md('uz').add_Hm().format(bloc.state.premiumTournaments[0].startAt)}',
+                      '${DateFormat.d('${context.locale}').add_MMM().add_Hm().format(bloc.state.premiumTournaments[0].startAt)}',
                       style: Theme.of(context)
                           .textTheme
                           .button

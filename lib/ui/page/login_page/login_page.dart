@@ -48,7 +48,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       CustomTextField(
                         hintText: 'login'.tr(),
-                        autoValidate: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: bloc.loginField,
                         validator:
                             bloc.loginFieldValidator,
@@ -57,10 +57,11 @@ class LoginPage extends StatelessWidget {
                         height: 8,
                       ),
                       CustomTextField(
-                        autoValidate: true,
+
                         hintText: 'password'.tr(),
                         textInputType: TextInputType.visiblePassword,
                         controller: bloc.passwordField,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         obscureText: true,
                         validator:
                             bloc.passwordFieldValidator,

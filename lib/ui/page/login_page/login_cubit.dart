@@ -68,9 +68,7 @@ class LoginCubit extends Cubit<LoginState> {
 
   void loginActivate() {
     if (loginField.text.isNotEmpty
-        //  &&
-        //     RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$').hasMatch(passwordField.text)
-        )
+       &&passwordField.text.isNotEmpty  )
       emit(LoginState.copyWith(state, isButtonActive: true));
     else
       emit(LoginState.copyWith(state, isButtonActive: false));

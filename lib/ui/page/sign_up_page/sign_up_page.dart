@@ -64,7 +64,7 @@ class SignUpPage extends StatelessWidget {
                         height: 32,
                       ),
                       CustomTextField(
-                        autoValidate: true,
+                        autovalidateMode:AutovalidateMode.onUserInteraction,
                         hintText: "login".tr(),
                         controller: loginField,
                         validator:
@@ -77,7 +77,7 @@ class SignUpPage extends StatelessWidget {
                       ),
                       CustomTextField(
                         hintText: "password".tr(),
-                        autoValidate: true,
+                        autovalidateMode:AutovalidateMode.onUserInteraction,
                         controller: passwordField,
                         textInputType: TextInputType.visiblePassword,
                         obscureText: true,
@@ -94,7 +94,7 @@ class SignUpPage extends StatelessWidget {
                         hintText: "confirm_password".tr(),
                         textInputType: TextInputType.visiblePassword,
                         obscureText: true,
-                        autoValidate: true,
+                        autovalidateMode:AutovalidateMode.onUserInteraction,
                         validator: context
                             .bloc<SignUpCubit>()
                             .passwordConfirmFieldValidator,
@@ -104,8 +104,21 @@ class SignUpPage extends StatelessWidget {
                       ),
                       CustomTextField(
                         controller: emailField,
-                        autoValidate: true,
+                        autovalidateMode:AutovalidateMode.onUserInteraction,
                         hintText: "email".tr(),
+                        textInputType: TextInputType.emailAddress,
+                        validator:
+                        context
+                            .bloc<SignUpCubit>()
+                            .emailFieldValidator,
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      CustomTextField(
+                        controller: emailField,
+                        autovalidateMode:AutovalidateMode.onUserInteraction,
+                        hintText: "PUBG ID",
                         textInputType: TextInputType.emailAddress,
                         validator:
                         context

@@ -16,11 +16,12 @@ class EntryPoint extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus.unfocus(),
       child: MaterialApp(
-          title: 'Tournament',themeMode: ThemeMode.dark,
+          title: 'Online shop',themeMode: ThemeMode.dark,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           darkTheme: ThemeData(
+           fontFamily: 'Poppins',
             canvasColor: Color(0xff12151A),
             dialogTheme: DialogTheme(backgroundColor: Color(0xff12151A)),
             bottomSheetTheme: BottomSheetThemeData(

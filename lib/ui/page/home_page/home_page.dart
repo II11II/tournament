@@ -34,13 +34,15 @@ class HomePage extends StatelessWidget {
             return NoConnection(
               onPressed: () async => await context.bloc<HomeCubit>().init(),
             );
+          else if (state.networkState == NetworkState.LOADING)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           else
             return Container();
         },
         listener: (BuildContext context, state) async {
-          if (state.networkState == NetworkState.LOADING) {
-            showLoading(context);
-          } else if (state.networkState == NetworkState.LOADED) {
+           if (state.networkState == NetworkState.LOADED) {
             if (Navigator.of(context, rootNavigator: true).canPop())
               Navigator.of(context, rootNavigator: true).pop();
           } else if (state.networkState == NetworkState.SERVER_ERROR) {
@@ -69,18 +71,16 @@ class HomePage extends StatelessWidget {
   }
 
   AppBar _appBar(BuildContext context) => AppBar(
-        leading: Container(),
+        leading: Builder(builder: (context) {
+          return IconButton(
+            icon: Icon(FeatherIcons.alignRight),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          );
+        }),
         title: Text('home_page'.tr()),
-        actions: [
-          Builder(builder: (context) {
-            return IconButton(
-              icon: Icon(FeatherIcons.alignRight),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          })
-        ],
+
       );
 
   Widget _body(BuildContext context) {
@@ -127,7 +127,6 @@ class HomePage extends StatelessWidget {
                         : 10,
                     itemBuilder: (context, index) {
                       return MatchCard(
-
                         tournament: bloc.state.todayTournaments[index],
                         onPressed: () => Navigator.push(
                             context,

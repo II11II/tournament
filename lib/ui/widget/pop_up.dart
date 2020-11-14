@@ -51,28 +51,64 @@ showMessage(BuildContext context, String title, IconData iconData,
       ));
 }
 
-showTicket(BuildContext context,String  matchId,String password,String instruction,
-    { Function onPressed}) async {
+showTicket(
+    BuildContext context, String matchId, String password, String instruction,
+    {Function onPressed}) async {
   await showDialog(
       context: context,
       child: SimpleDialog(
-        contentPadding: EdgeInsets.all(0),
-
+        contentPadding: EdgeInsets.zero,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        title: Center(child: Text("match_ticket".tr(),style: Style.bodyText2,)),
+        title: Center(
+            child: Text(
+          "match_ticket".tr(),
+          style: Style.bodyText2,
+        )),
         children: [
           SizedBox(
             height: 8,
           ),
-          Text("${"match_id".tr()}:",style:Style.defaultText ,),
-          Text("$matchId:",style:Style.smallText ,),
-          Text("${"password".tr()}:",style:Style.defaultText),
-          Text("$password:",style:Style.smallText ,),
-
-          Text("${"match_instructions".tr()}:",style:Style.defaultText),
-          Text("$instruction:",style:Style.smallText ,),
-
-
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
+                  TextSpan(
+                      text: "${"match_id".tr()}:",
+                      style: Style.defaultText,
+                      children: [
+                        TextSpan(
+                          text: " $matchId",
+                          style: Style.smallText,
+                        )
+                      ]),
+                ),
+                Text.rich(
+                  TextSpan(
+                      text: "${"password".tr()}:",
+                      style: Style.defaultText,
+                      children: [
+                        TextSpan(
+                          text: " $password",
+                          style: Style.smallText,
+                        )
+                      ]),
+                ),
+                Text.rich(
+                  TextSpan(
+                      text: "${"match_instructions".tr()}:",
+                      style: Style.defaultText,
+                      children: [
+                        TextSpan(
+                          text: " $instruction",
+                          style: Style.smallText,
+                        )
+                      ]),
+                ),
+              ],
+            ),
+          ),
           SizedBox(
             height: 30,
           ),
@@ -98,29 +134,37 @@ showWithdraw(BuildContext context, {bool lock}) async {
             textAlign: TextAlign.center,
             style: Style.bodyText2,
           ),
-          contentPadding: EdgeInsets.all(2),
-          titlePadding: EdgeInsets.all(8),
+
+          titlePadding: EdgeInsets.only(top:21,left: 8,right:8),
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("card_id".tr()),
-            ),
-            CustomTextField(
-              hintText: "8600 **** **** ****",
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("card_holder".tr()),
-            ),
-            CustomTextField(
-              hintText: "JOHN DOE",
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("withdraw_amount".tr()),
-            ),
-            CustomTextField(
-              hintText: "MIN. UZS 5000",
+              padding: const EdgeInsets.only(left: 16.0,right: 16.0,bottom:16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("card_id".tr()),
+                  ),
+                  CustomTextField(
+                    hintText: "8600 **** **** ****",
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("card_holder".tr()),
+                  ),
+                  CustomTextField(
+                    hintText: "JOHN DOE",
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("withdraw_amount".tr()),
+                  ),
+                  CustomTextField(
+                    hintText: "MIN. UZS 5000",
+                  ),
+                ],
+              ),
             ),
             CustomButton(
               title: Text(

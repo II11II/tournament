@@ -43,7 +43,7 @@ class ForgetPasswordPage extends StatelessWidget {
                       ),
                       CustomTextField(
                         hintText: 'email'.tr(),
-                        autoValidate: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller:
                             context.bloc<ForgetPasswordCubit>().loginField,
                         validator:

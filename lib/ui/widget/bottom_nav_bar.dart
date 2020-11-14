@@ -1,5 +1,3 @@
-
-
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,20 +12,52 @@ class BottomNavBar extends StatelessWidget {
         items: [
           BottomNavigationBarItem(
             title: Container(),
-            icon: Icon(
-              FeatherIcons.home,
+            icon: ShaderMask(
+              shaderCallback: (Rect bounds) {
+                return LinearGradient(
+                  colors: [
+                    Color(0xff176FD0),
+                    Color(0xff1DA8F6),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ).createShader(bounds);
+              },
+              child: Icon(
+                FeatherIcons.home,
+              ),
             ),
           ),
           BottomNavigationBarItem(
             title: Container(),
-            icon: Icon(
-              FeatherIcons.shoppingCart,
+            icon: ShaderMask(
+              shaderCallback: (Rect bounds) {   return LinearGradient(
+                colors: [
+                  Color(0xff176FD0),
+                  Color(0xff1DA8F6),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ).createShader(bounds); },
+              child: Icon(
+                FeatherIcons.shoppingCart,
+              ),
             ),
           ),
           BottomNavigationBarItem(
             title: Container(),
-            icon: Icon(
-              FeatherIcons.user,
+            icon: ShaderMask(
+              shaderCallback: (Rect bounds) {   return LinearGradient(
+                colors: [
+                  Color(0xff176FD0),
+                  Color(0xff1DA8F6),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ).createShader(bounds); },
+              child: Icon(
+                FeatherIcons.user,
+              ),
             ),
           ),
         ],

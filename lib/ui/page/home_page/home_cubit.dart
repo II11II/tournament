@@ -30,18 +30,18 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<List<Tournament>> getPremiumTournaments() async {
     List<Tournament> premiumTournaments = await repository.premiumTournaments();
-    return premiumTournaments;
+    return premiumTournaments..sort((a,b)=>a.createdAt.compareTo(b.createdAt));
   }
 
   Future<List<Tournament>> getTodayTournaments() async {
     List<Tournament> todayTournaments = await repository.todayTournaments();
-    return todayTournaments;
+    return todayTournaments..sort((a,b)=>a.createdAt.compareTo(b.createdAt));
   }
 
   Future<List<Tournament>> getUpcomingTournaments() async {
     List<Tournament> upcomingTournaments =
         await repository.upcomingTournaments();
-    return upcomingTournaments;
+    return upcomingTournaments..sort((a,b)=>a.createdAt.compareTo(b.createdAt));
   }
 
   Future init() async {
