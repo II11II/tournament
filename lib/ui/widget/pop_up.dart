@@ -135,6 +135,7 @@ showWithdraw(BuildContext context, {bool lock}) async {
             style: Style.bodyText2,
           ),
 
+
           titlePadding: EdgeInsets.only(top:21,left: 8,right:8),
           children: [
             Padding(
