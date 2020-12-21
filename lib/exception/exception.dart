@@ -50,3 +50,13 @@ class InvalidLoginPasswordException implements Exception {
 }
 
 class UnauthorisedException implements Exception {}
+class InvalidCardCredentialsException implements Exception {
+  var cause;
+
+  InvalidCardCredentialsException([this.cause]);
+
+  @override
+  String toString() {
+    return "${(InvalidCardCredentialsException).toString()}: $cause";
+  }
+}

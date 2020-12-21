@@ -70,5 +70,10 @@
   "unknown_error": "Неизвестная ошибка :(",
   "favourite_tournaments": "Любимые турниры",
   "ticket": "Билет",
-  "next": "Следующий"
+  "next": "Следующий",
+  "expire_date": "Срок годности карты",
+  "payment_amount": "Сумма оплаты",
+  "pay": "Оплатить",
+  "invalid_card_credentials": "Неправильные данные карты"
+
 }

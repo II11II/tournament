@@ -63,9 +63,9 @@ class MatchCard extends StatelessWidget {
                           );
                         },
 //                  color: Theme.of(context).appBarTheme.color.withAlpha(10),
-                        progressIndicatorBuilder: (context, text, d) => Center(
-                          child: CircularProgressIndicator(),
-                        ),
+//                         progressIndicatorBuilder: (context, text, d) => Center(
+//                           child: CircularProgressIndicator(),
+//                         ),
                       ),
                     ),
                     Positioned(

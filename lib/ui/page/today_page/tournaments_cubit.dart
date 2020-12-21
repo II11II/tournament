@@ -11,14 +11,16 @@ import 'package:tournament/ui/state/network_state.dart';
 part 'tournaments_state.dart';
 
 class TournamentCubits extends Cubit<TournamentsState> {
-  TournamentCubits(Function getTournaments,{List<Tournament> tournaments})
-      : super(TournamentsState(getTournaments,tournaments: tournaments));
+  TournamentCubits(Function getTournaments, {List<Tournament> tournaments})
+      : super(TournamentsState(getTournaments, tournaments: tournaments));
   final Repository repository = Repository.instance;
   var log = Logger();
 
-  Future init() async {
+  Future<void> init() async {
     try {
-      emit(state.copyWith(networkState: NetworkState.LOADING,));
+      emit(state.copyWith(
+        networkState: NetworkState.LOADING,
+      ));
       List<Tournament> tournaments = await state.getTournaments();
       log.d(tournaments);
       emit(state.copyWith(

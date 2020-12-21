@@ -115,7 +115,8 @@ class HomePage extends StatelessWidget {
                   BlocProvider<TournamentCubits>(
                       create: (BuildContext context) =>
                           TournamentCubits(bloc.getTodayTournaments)..init(),
-                      child: TournamentsPage(appBarTitle: 'today'.tr()))),
+                      child: TournamentsPage(appBarTitle: 'today'.tr()))
+                      ),
             if (bloc.state.todayTournaments.isNotEmpty)
               Container(
                 height: 252,

@@ -1,10 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tournament/bloc/send_sms_code/cubit/send_sms_code_cubit.dart';
+import 'package:tournament/bloc/timer/timer_bloc.dart';
+import 'package:tournament/repository/repository.dart';
+import 'package:tournament/ui/page/match_page/match_cubit.dart';
 import 'package:tournament/ui/style/color.dart';
 import 'package:tournament/ui/style/style.dart';
 import 'package:tournament/ui/widget/custom_button.dart';
 import 'package:tournament/ui/widget/custom_textfield.dart';
+import 'package:tournament/ui/widget/sms_code_verifaction.dart';
 
 showLoading(BuildContext context) async {
   await showDialog(
@@ -134,12 +141,11 @@ showWithdraw(BuildContext context, {bool lock}) async {
             textAlign: TextAlign.center,
             style: Style.bodyText2,
           ),
-
-
-          titlePadding: EdgeInsets.only(top:21,left: 8,right:8),
+          titlePadding: EdgeInsets.only(top: 21, left: 8, right: 8),
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 16.0,right: 16.0,bottom:16.0),
+              padding:
+                  const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -178,6 +184,110 @@ showWithdraw(BuildContext context, {bool lock}) async {
                   bottomLeft: Radius.circular(8),
                   bottomRight: Radius.circular(8)),
             )
+          ],
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+      ));
+}
+
+showSmsCode(
+  BuildContext context,MatchCubit bloc
+) async {
+  await showDialog(
+      context: context,
+      builder: (BuildContext newContext) {
+        // return SmsCodeVerifaction();
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+                create: (newContext) =>
+                    TimerBloc(Ticker(), bloc)),
+            BlocProvider(
+                create: (newContext) =>
+                    SendSmsCodeCubit(bloc,Repository.instance))
+          ],
+          child: SmsCodeVerifaction(bloc),
+        );
+      });
+}
+
+showPayment(BuildContext context, TextEditingController expireDate,
+    TextEditingController cardNumber, TextEditingController amount,
+    {bool lock, Function onPressed}) async {
+  await showDialog(
+      context: context,
+      child: WillPopScope(
+        onWillPop: () => Future.value(lock ?? true),
+        child: SimpleDialog(
+          title: Row(
+            children: [
+              IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () =>
+                      Navigator.of(context, rootNavigator: true).pop()),
+              Text(
+                "payment".tr(),
+                textAlign: TextAlign.center,
+                style: Style.bodyText2,
+              ),
+            ],
+          ),
+          titlePadding: EdgeInsets.only(top: 21, left: 8, right: 8),
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("card_id".tr()),
+                  ),
+                  CustomTextField(
+                    controller: cardNumber,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    hintText: "8600 **** **** ****",
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("expire_date".tr()),
+                  ),
+                  CustomTextField(
+                    controller: expireDate,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    hintText: "05/25",
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("payment_amount".tr()),
+                  ),
+                  CustomTextField(
+                    controller: amount,
+                    hintText: "MIN. UZS 5000",
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            CustomButton(
+              title: Text(
+                "pay".tr(),
+                style: Style.defaultText,
+              ),
+              onPressed: onPressed,
+              width: double.infinity,
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8)),
+            ),
           ],
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

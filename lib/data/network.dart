@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:tournament/exception/exception.dart';
+import 'package:tournament/model/check_card.dart';
 import 'package:tournament/model/favourite.dart';
 import 'package:tournament/model/player.dart';
-import 'package:tournament/model/ticket.dart';
 import 'package:tournament/model/tournament.dart';
 import 'package:tournament/repository/repository.dart';
 
@@ -21,7 +22,7 @@ mixin Network {
   /// Requests
   Future<String> login(String email, String password) async {
     var body = {
-      "email": email,
+      "username": email,
       "password": password,
     };
     http.Response response =
@@ -154,7 +155,8 @@ mixin Network {
 
     if (response.statusCode == 200) {
       List tournament = json.decode(response.body);
-      return List<Favourites>.from(tournament.map((e) => Favourites.fromJson(e)));
+      return List<Favourites>.from(
+          tournament.map((e) => Favourites.fromJson(e)));
     } else if (response.statusCode == 401) {
       throw InvalidTokenException(response.body);
     } else
@@ -187,17 +189,71 @@ mixin Network {
     } else
       throw Exception(response.body);
   }
-  Future<void> toFavourite(int tournamentId) async {
-    http.Response response =
-        await http.post("$_url/api/tournament/favorite/$tournamentId/", headers: await _header());
 
-    if (response.statusCode == 201||response.statusCode == 200) {
+  Future<void> toFavourite(int tournamentId) async {
+    http.Response response = await http.post(
+        "$_url/api/tournament/favorite/$tournamentId/",
+        headers: await _header());
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
       return;
     } else if (response.statusCode == 401) {
       throw InvalidTokenException(response.body);
     } else if (response.statusCode >= 500) {
       throw ServerErrorException(response.body);
     } else
-      throw Exception([response.statusCode,response.body]);
+      throw Exception([response.statusCode, response.body]);
+  }
+
+  Future<CheckCard> checkCard(
+      String cardNumber, String expireDate, String amount) async {
+    var body = {
+      "card_number": cardNumber,
+      "exp_date": expireDate,
+      "amount": amount,
+    };
+
+    http.Response response = await http.post("$_url/api/accounts/cc/",
+        headers: await _header(), body: body);
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      Logger().d(response.body);
+      Map result = jsonDecode(utf8.decode(response.body.runes.toList()));
+      if (result.containsKey("error"))
+        throw InvalidCardCredentialsException(result["error"]);
+      else
+        return  CheckCard.fromJson(result);
+    } else if (response.statusCode == 401) {
+      throw InvalidTokenException(response.body);
+    } else if (response.statusCode >= 500) {
+      throw ServerErrorException(response.body);
+    } else
+      throw Exception([response.statusCode, response.body]);
+  }
+
+  Future<void> checkSmsCode(
+      String code, String cardToken, String amount) async {
+    var body = {
+      "code": code,
+      "token": cardToken,
+      "amount": amount,
+    };
+    http.Response response = await http.post("$_url/api/accounts/cc/verify",
+        headers: await _header(), body: body);
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      
+
+      Map result = jsonDecode(utf8.decode(response.body.runes.toList()));
+      if (result.containsKey("error"))
+        throw InvalidCardCredentialsException(result["error"]);
+      else
+        return;
+    } else if (response.statusCode == 401) {
+      throw InvalidTokenException(response.body);
+    } else if (response.statusCode >= 500) {
+      throw ServerErrorException(response.body);
+    } else
+      throw Exception([response.statusCode, response.body]);
   }
 }

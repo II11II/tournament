@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:logger/logger.dart';
 import 'package:tournament/ui/page/entry_point/entry_point.dart';
 import 'package:tournament/ui/page/match_page/match_cubit.dart';
 import 'package:tournament/ui/state/network_state.dart';
@@ -30,6 +31,9 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
     FeatherIcons.activity,
     FeatherIcons.award
   ];
+  TextEditingController cardNumber = TextEditingController();
+  TextEditingController expireDate = TextEditingController();
+  TextEditingController amount = TextEditingController();
 
   @override
   void initState() {
@@ -156,13 +160,13 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                   BlocBuilder<MatchCubit, MatchState>(
                     builder: (context, MatchState state) => AnimatedCrossFade(
                       firstChild: Text(
-                        '${bloc.state.tournament.description}',
+                        '${state.tournament.description}',
                         style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w300),
                         maxLines: 3,
                       ),
                       secondChild: Text(
-                        '${bloc.state.tournament.description}',
+                        '${state.tournament.description}',
                         style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w300),
                       ),
@@ -177,13 +181,13 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
                   BlocBuilder<MatchCubit, MatchState>(
                     builder: (context, MatchState state) => AnimatedCrossFade(
                       firstChild: Text(
-                        '${bloc.state.tournament.instructions}',
+                        '${state.tournament.instructions}',
                         style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w300),
                         maxLines: 3,
                       ),
                       secondChild: Text(
-                        '${bloc.state.tournament.instructions}',
+                        '${state.tournament.instructions}',
                         style: TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w300),
                       ),
@@ -268,126 +272,144 @@ class _MatchPageState extends State<MatchPage> with TickerProviderStateMixin {
         Padding(
           padding: const EdgeInsets.only(top: 8),
           child: AnimatedCrossFade(
-            firstChild: CustomButton(
-              text: "get_ticket_now".tr(),
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16)),
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(color: Colors.blueAccent, blurRadius: 5)
-                            ],
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(14),
-                              topRight: Radius.circular(14),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 5.0),
-                          child: BottomSheet(
-                            enableDrag: true,
-                            animationController: animationController,
-                            elevation: 10,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              topRight: Radius.circular(16),
-                            )),
-                            builder: (BuildContext context) {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 16, left: 8, right: 8),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text('get_ticket_now'.tr()),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 16),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text('total_payment'.tr()),
-                                                FittedBox(child: Text('UZS 20'))
-                                              ],
+            firstChild: BlocListener<MatchCubit, MatchState>(
+              listenWhen: (p,c)=>p.card!=c.card,
+                listener: (ctx, state) {
+                  Logger().d("${state.networkState}");
+                                              
+                                              if (state.card != null)
+                                                showSmsCode(context,bloc);
+                                            },
+              child: CustomButton(
+                text: "get_ticket_now".tr(),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16)),
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.blueAccent, blurRadius: 5)
+                              ],
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(14),
+                                topRight: Radius.circular(14),
+                              )),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: BottomSheet(
+                              enableDrag: true,
+                              animationController: animationController,
+                              elevation: 10,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(16),
+                              )),
+                              builder: (BuildContext context) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 16, left: 8, right: 8),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text('get_ticket_now'.tr()),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text('total_payment'.tr()),
+                                                  FittedBox(
+                                                      child: Text(
+                                                          'UZS ${bloc.state.tournament.cost}'))
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text('payment_option'.tr()),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Card(
-                                                  color: ColorApp
-                                                      .backgroundColor
-                                                      .withBlue(40),
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8)),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/pay_me_logo.png'),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child:
+                                                  Text('payment_option'.tr()),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Card(
+                                                    color: ColorApp
+                                                        .backgroundColor
+                                                        .withBlue(40),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8)),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Image.asset(
+                                                          'assets/images/pay_me_logo.png'),
+                                                    ),
                                                   ),
-                                                ),
-                                                // Card(
-                                                //   color: ColorApp.drawerColor,
-                                                //   shape: RoundedRectangleBorder(
-                                                //       borderRadius:
-                                                //           BorderRadius.circular(
-                                                //               8)),
-                                                //   child: Padding(
-                                                //     padding:
-                                                //         const EdgeInsets.all(
-                                                //             8.0),
-                                                //     child: Image.asset(
-                                                //         'assets/images/click_logo.png'),
-                                                //   ),
-                                                // ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          CustomButton(
-                                            text: 'buy_now'.tr(),
-
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                            onClosing: () {},
+                                            CustomButton(
+                                                text: 'buy_now'.tr(),
+                                                onPressed: () {
+                                                  // Navigator.of(context,rootNavigator: true).pop();
+                                                  showPayment(
+                                                      context,
+                                                      expireDate,
+                                                      cardNumber,
+                                                      amount,
+                                                      lock: false,
+                                                      onPressed: () async {
+                                                    await bloc.checkCard(
+                                                        cardNumber.text,
+                                                        expireDate.text,
+                                                        amount.text);
+                                                  });
+                                                }),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                              onClosing: () {},
+                            ),
                           ),
-                        ),
-                      );
-                    });
-              },
+                        );
+                      });
+                },
+              ),
             ),
             duration: Duration(seconds: 1),
             crossFadeState: CrossFadeState.showFirst,

@@ -71,5 +71,12 @@
   "user_exist": "Foydalanuvchi allaqachon mavjud",
   "unknown_error": "Noma'lum xato :(",
   "favourite_tournaments": "Sevimli Turnirlar",
-  "ticket": "Chipta"
+  "ticket": "Chipta",
+  "expire_date": "Kartani muddati",
+  "payment_amount": "To'lov miqdori",
+  "pay": "To'lash",
+  "invalid_card_credentials": "Kartani malumotlari no'tgri"
+
+
+
 }
