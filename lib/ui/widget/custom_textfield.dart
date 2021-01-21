@@ -10,6 +10,7 @@ class CustomTextField extends StatelessWidget {
   final AutovalidateMode autovalidateMode;
   final bool obscureText;
   final Function onChanged;
+  final bool readOnly;
   final List<TextInputFormatter> inputFormatters;
 
   const CustomTextField(
@@ -21,12 +22,13 @@ class CustomTextField extends StatelessWidget {
       this.hintText,
       this.autoValidate,
       this.onChanged,
-      this.autovalidateMode, this.inputFormatters})
+      this.autovalidateMode, this.inputFormatters, this.readOnly})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readOnly??false,
       onChanged: onChanged,
       obscureText: obscureText ?? false,
       keyboardType: textInputType,

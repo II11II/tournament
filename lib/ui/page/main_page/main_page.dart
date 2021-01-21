@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tournament/bloc/withdraw/withdraw_bloc.dart';
+import 'package:tournament/repository/repository.dart';
 import 'package:tournament/ui/page/home_page/home_cubit.dart';
 import 'package:tournament/ui/page/home_page/home_page.dart';
 import 'package:tournament/ui/page/my_tickets_page/my_tickets_cubit.dart';
@@ -19,9 +21,16 @@ class MainPage extends StatelessWidget {
     BlocProvider(
         create: (BuildContext context) => MyTicketsCubit()..getMyTickets(),
         child: MyTicketsPage()),
-    BlocProvider(
-        create: (BuildContext context) => ProfileCubit()..init(),
-        child: ProfilePage()),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (BuildContext context) => ProfileCubit()..init(),
+        ),BlocProvider(
+          create: (BuildContext context) => WithdrawBloc(Repository()),
+        )
+      ],
+      child: ProfilePage(),
+    ),
   ];
 
   @override

@@ -12,7 +12,7 @@ import 'package:easy_localization/easy_localization.dart';
 part 'match_state.dart';
 
 class MatchCubit extends Cubit<MatchState> {
-  MatchCubit(Tournament tournament) : super(MatchState(tournament));
+  MatchCubit(Tournament tournament) : super(MatchState(tournament,isLiked:tournament.isFavourite ));
   final Repository repository = Repository.instance;
   var log = Logger();
 
@@ -23,6 +23,7 @@ class MatchCubit extends Cubit<MatchState> {
       emit(state.copyWith(isDescriptionExpanded: !state.isDescriptionExpanded));
 
   checkCard(String cardNumber, String expireDate, String amount) async {
+
     try {
       emit(state.copyWith(networkState: NetworkState.LOADING));
       CheckCard checkCard =
@@ -66,6 +67,7 @@ class MatchCubit extends Cubit<MatchState> {
   }
 
   likePress() async {
+
     try {
       emit(state.copyWith(networkState: NetworkState.LOADING));
       await repository.toFavourite(state.tournament.id);

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:tournament/bloc/withdraw/withdraw_bloc.dart';
 import 'package:tournament/ui/page/entry_point/entry_point.dart';
 import 'package:tournament/ui/page/profile_page/profile_cubit.dart';
 import 'package:tournament/ui/state/network_state.dart';
@@ -15,52 +16,62 @@ import 'package:tournament/ui/widget/no_connection.dart';
 import 'package:tournament/ui/widget/pop_up.dart';
 
 class ProfilePage extends StatelessWidget {
+  final cardController = TextEditingController();
+  final holderController = TextEditingController();
+  final amountController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         extendBodyBehindAppBar: true,
         extendBody: true,
         body: BlocConsumer<ProfileCubit, ProfileState>(
-            listener: (BuildContext context, state) async {
-          if (state.state == NetworkState.LOADING) {
-            showLoading(context);
-          } else if (state.state == NetworkState.LOADED) {
-            if (Navigator.of(context, rootNavigator: true).canPop())
-              Navigator.of(context, rootNavigator: true).pop();
-          } else if (state.state == NetworkState.SERVER_ERROR) {
-            if (Navigator.of(context, rootNavigator: true).canPop())
-              Navigator.of(context, rootNavigator: true).pop();
-            showMessage(context, state.message, Icons.report_problem_outlined,
-                iconColor: Colors.red);
-          } else if (state.state == NetworkState.INVALID_TOKEN) {
-            if (Navigator.of(context, rootNavigator: true).canPop())
-              Navigator.of(context, rootNavigator: true).pop();
-            showMessage(context, state.message, Icons.report_problem_outlined,
-                iconColor: Colors.red,
-                onPressed: () => Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => EntryPoint())));
-          } else if (state.state == NetworkState.NO_CONNECTION) {
-            if (Navigator.of(context, rootNavigator: true).canPop())
-              Navigator.of(context, rootNavigator: true).pop();
-            await showMessage(
-                context, state.message, Icons.report_problem_outlined,
-                iconColor: Colors.red);
-          }
-        }, builder: (context, state) {
-          if (state.state == NetworkState.LOADED)
-            return body(context);
-          else if (state.state == NetworkState.NO_CONNECTION)
-            return NoConnection(
-              onPressed: () async => await context.bloc<ProfileCubit>().init(),
-            );
-          else
-            return Container();
-        }));
+          listener: (BuildContext context, state) async {
+            if (state.state == NetworkState.LOADING) {
+              showLoading(context);
+            } else if (state.state == NetworkState.LOADED) {
+              if (Navigator.of(context, rootNavigator: true).canPop())
+                Navigator.of(context, rootNavigator: true).pop();
+            } else if (state.state == NetworkState.SERVER_ERROR) {
+              if (Navigator.of(context, rootNavigator: true).canPop())
+                Navigator.of(context, rootNavigator: true).pop();
+              showMessage(context, state.message, Icons.report_problem_outlined,
+                  iconColor: Colors.red);
+            } else if (state.state == NetworkState.INVALID_TOKEN) {
+              if (Navigator.of(context, rootNavigator: true).canPop())
+                Navigator.of(context, rootNavigator: true).pop();
+              showMessage(context, state.message, Icons.report_problem_outlined,
+                  iconColor: Colors.red,
+                  onPressed: () => Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => EntryPoint())));
+            } else if (state.state == NetworkState.NO_CONNECTION) {
+              if (Navigator.of(context, rootNavigator: true).canPop())
+                Navigator.of(context, rootNavigator: true).pop();
+              await showMessage(
+                  context, state.message, Icons.report_problem_outlined,
+                  iconColor: Colors.red);
+            }
+          },
+          builder: (context, state) {
+            if (state.state == NetworkState.LOADED)
+              return body(context);
+            else if (state.state == NetworkState.NO_CONNECTION)
+              return NoConnection(
+                onPressed: () async =>
+                    await context.bloc<ProfileCubit>().init(),
+              );
+            else
+              return Container();
+          },
+          listenWhen: (p, c) => p.state != c.state,
+          buildWhen: (p, c) => p.state != c.state,
+        ));
   }
 
   Widget body(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var bloc = context.bloc<ProfileCubit>();
+    var withdrawBloc = context.bloc<WithdrawBloc>();
 
     return SingleChildScrollView(
       child: Stack(
@@ -151,7 +162,7 @@ class ProfilePage extends StatelessWidget {
                             ),
                             color: ColorApp.backgroundColor,
                             shadowDarkColor: Colors.black,
-                             shadowLightColor: Colors.grey.shade900,
+                            shadowLightColor: Colors.grey.shade900,
                             shadowDarkColorEmboss: Colors.black,
                             depth: 10),
                         child: TextFormField(
@@ -183,16 +194,43 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    CustomButton(
-                      onPressed: () {
-                        showWithdraw(context);
+                    BlocListener<WithdrawBloc, WithdrawState>(
+                      listener: (BuildContext context, state) async {
+                        if (state is WithdrawLoading) {
+                          showLoading(context);
+                        } else if (state is WithdrawLoaded) {
+                          if (Navigator.of(context, rootNavigator: true)
+                              .canPop())
+                            Navigator.of(context, rootNavigator: true).pop();
+                          showMessage(context, "application_accepted".tr(), Icons.check_circle,
+                              iconColor: Colors.greenAccent);
+                        } else if (state is WithdrawError) {
+                          if (Navigator.of(context, rootNavigator: true)
+                              .canPop())
+                            Navigator.of(context, rootNavigator: true).pop();
+                          showMessage(context, state.message,
+                              Icons.report_problem_outlined,
+                              iconColor: Colors.red);
+                        }
                       },
-                      title: Text(
-                        'withdraw'.tr(),
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800),
+                      child: CustomButton(
+                        onPressed: () {
+                          showWithdraw(context,
+                              amount: amountController,
+                              card: cardController,
+                              holder: holderController,
+                              onPressed: () => withdrawBloc.add(Withdraw(
+                                  cardController.text,
+                                  holderController.text,
+                                  amountController.text)));
+                        },
+                        title: Text(
+                          'withdraw'.tr(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800),
+                        ),
                       ),
                     )
                   ],
@@ -221,18 +259,20 @@ class ProfilePage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
-                  child: Text(
-                    '${bloc.state.player.firstName}',
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        foreground: Paint()
-                          ..shader = LinearGradient(
-                            colors: <Color>[
-                              Color(0xff1877DE),
-                              Color(0xff3B0BFE)
-                            ],
-                          ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0))),
+                  child: Center(
+                    child: Text(
+                      '${bloc.state.player.firstName}',
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          foreground: Paint()
+                            ..shader = LinearGradient(
+                              colors: <Color>[
+                                Color(0xff1877DE),
+                                Color(0xff3B0BFE)
+                              ],
+                            ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0))),
+                    ),
                   ),
                 ),
               ],
@@ -255,7 +295,7 @@ class ProfilePage extends StatelessWidget {
                       style: NeumorphicStyle(
                           color: ColorApp.backgroundColor,
                           shadowDarkColor: Colors.black,
-                           shadowLightColor: Colors.grey.shade900,
+                          shadowLightColor: Colors.grey.shade900,
                           shadowDarkColorEmboss: Colors.black,
                           depth: 10),
                       child: Column(
@@ -286,7 +326,7 @@ class ProfilePage extends StatelessWidget {
                       style: NeumorphicStyle(
                           color: ColorApp.backgroundColor,
                           shadowDarkColor: Colors.black,
-                           shadowLightColor: Colors.grey.shade900,
+                          shadowLightColor: Colors.grey.shade900,
                           shadowDarkColorEmboss: Colors.black,
                           depth: 10),
                       child: Column(
@@ -315,7 +355,7 @@ class ProfilePage extends StatelessWidget {
                       style: NeumorphicStyle(
                           color: ColorApp.backgroundColor,
                           shadowDarkColor: Colors.black,
-                           shadowLightColor: Colors.grey.shade900,
+                          shadowLightColor: Colors.grey.shade900,
                           shadowDarkColorEmboss: Colors.black,
                           depth: 10),
                       child: Column(

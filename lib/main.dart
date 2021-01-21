@@ -10,6 +10,7 @@ Future main() async {
       supportedLocales: [Locale('ru'), Locale('en'), Locale('uz')],
       path: 'assets/translations',
       useOnlyLangCode: true,
+      startLocale: Locale('ru'),
       saveLocale: true,
       fallbackLocale: Locale('ru'),
       child: BlocProvider<MainCubit>(

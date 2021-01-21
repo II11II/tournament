@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:launch_review/launch_review.dart';
+import 'package:logger/logger.dart';
 import 'package:tournament/ui/page/entry_point/entry_point.dart';
 import 'package:tournament/ui/page/home_page/home_cubit.dart';
 import 'package:tournament/ui/page/match_page/match_cubit.dart';
@@ -42,7 +43,7 @@ class HomePage extends StatelessWidget {
             return Container();
         },
         listener: (BuildContext context, state) async {
-           if (state.networkState == NetworkState.LOADED) {
+          if (state.networkState == NetworkState.LOADED) {
             if (Navigator.of(context, rootNavigator: true).canPop())
               Navigator.of(context, rootNavigator: true).pop();
           } else if (state.networkState == NetworkState.SERVER_ERROR) {
@@ -73,14 +74,13 @@ class HomePage extends StatelessWidget {
   AppBar _appBar(BuildContext context) => AppBar(
         leading: Builder(builder: (context) {
           return IconButton(
-            icon: Icon(FeatherIcons.alignRight),
+            icon: Icon(Icons.sort),
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
           );
         }),
         title: Text('home_page'.tr()),
-
       );
 
   Widget _body(BuildContext context) {
@@ -115,8 +115,7 @@ class HomePage extends StatelessWidget {
                   BlocProvider<TournamentCubits>(
                       create: (BuildContext context) =>
                           TournamentCubits(bloc.getTodayTournaments)..init(),
-                      child: TournamentsPage(appBarTitle: 'today'.tr()))
-                      ),
+                      child: TournamentsPage(appBarTitle: 'today'.tr()))),
             if (bloc.state.todayTournaments.isNotEmpty)
               Container(
                 height: 252,
@@ -273,8 +272,9 @@ class HomePage extends StatelessWidget {
                     child: ListTile(
                       onTap: () async {
                         /// TODO : link to play market and app store
-                        // LaunchReview.launch(androidAppId: "com.iyaffle.rangoli",
-                        //     iOSAppId: "585027354");
+                        LaunchReview.launch(
+                            androidAppId: "uz.fdev.pubgarena",
+                            iOSAppId: "585027354");
                       },
                       leading: Icon(
                         Icons.star_border,
@@ -332,6 +332,7 @@ class HomePage extends StatelessWidget {
                         )),
                     child: BlocListener<HomeCubit, HomeState>(
                       listener: (BuildContext context, state) {
+                        Logger().d(state.networkState);
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

@@ -12,7 +12,7 @@ part 'login_state.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginState());
   final Repository repository = Repository.instance;
-  final loginField = TextEditingController();
+  final loginField = TextEditingController(text: "+998");
   final passwordField = TextEditingController();
 
   Future login() async {

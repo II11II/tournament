@@ -30,7 +30,7 @@
   "balance": "Баланс",
   "revenue": "Доход",
   "matches": "Матчи",
-  "pubg_username": "PUBG НИКНЕЙМ:",
+  "pubg_username": "ТЕЛЕФОН:",
   "match_ticket": "БИЛЕТ МАТЧА",
   "match_id": "Матч ID",
   "match_instructions": "Инструкции матча",
@@ -63,7 +63,7 @@
   "buy_now": "КУПИТЬ СЕЙЧАС",
   "total_payment": "Полная оплата",
   "payment_option": "Вариант оплаты",
-  "email_validation_info": "Введите действующий адрес электронной почты",
+  "email_validation_info": "Введите действующий PUBG ID",
   "password_not_matching": "Пароли не совпадают",
   "server_error": "Ошибка сервера",
   "user_exist": "Пользователь уже существует",
@@ -74,6 +74,18 @@
   "expire_date": "Срок годности карты",
   "payment_amount": "Сумма оплаты",
   "pay": "Оплатить",
-  "invalid_card_credentials": "Неправильные данные карты"
+  "invalid_card_credentials": "Неправильные данные карты",
+  "phone_number": "Номер телефона",
+  "success_payment": "Успешно оплачено",
+  "payment": "Оплата",
+  "full_name": "Ф.И.О.",
+  "invalid_credentials": "Неправильный логин или пароль",
+  "application_accepted": "Ваш запрос принят",
+
+  "name_validator": "Введите имя",
+  "time_tournament": "Начало турнира"
+
+
+
 
 }

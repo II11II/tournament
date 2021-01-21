@@ -42,7 +42,7 @@ class ForgetPasswordPage extends StatelessWidget {
                         height: 32,
                       ),
                       CustomTextField(
-                        hintText: 'email'.tr(),
+                        hintText: 'phone_number'.tr(),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller:
                             context.bloc<ForgetPasswordCubit>().loginField,

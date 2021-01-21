@@ -19,16 +19,15 @@ class Ticker {
 }
 
 class TimerBloc extends Bloc<TimerEvent, TimerState> {
-  TimerBloc(Ticker ticker, MatchCubit bloc)
-      : assert(ticker != null && bloc != null),
+  TimerBloc(Ticker ticker)
+      : assert(ticker != null ),
         _ticker = ticker,
-        _bloc = bloc,
+
         super(TimerInitial(0));
 
   StreamSubscription<int> _tickerSubscription;
   final Ticker _ticker;
-  final MatchCubit _bloc;
-  final Repository _repository = Repository.instance;
+
   final log = Logger();
 
   @override
@@ -38,8 +37,6 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       yield* _mapTimerStartedToState(event);
     } else if (event is TimerTicked) {
       yield* _mapTimerTickedToState(event);
-    } else if (event is TimerReset) {
-      yield* _mapTimerResetToState(event);
     }
   }
 
@@ -52,17 +49,15 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   }
 
   Stream<TimerState> _mapTimerTickedToState(TimerTicked tick) async* {
+    print(tick);
     yield tick.duration > 0
         ? TimerRunInProgress(tick.duration)
         : TimerRunComplete();
   }
 
-  Stream<TimerState> _mapTimerResetToState(TimerReset reset) async* {
-    _tickerSubscription?.cancel();
-    yield TimerInitial(60);
-  }
 
-  
+
+
 
   @override
   Future<void> close() {

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tournament/bloc/resend_sms_code/resend_sms_bloc.dart';
 import 'package:tournament/bloc/send_sms_code/cubit/send_sms_code_cubit.dart';
 import 'package:tournament/bloc/timer/timer_bloc.dart';
+import 'package:tournament/bloc/timer/timer_event.dart';
 import 'package:tournament/repository/repository.dart';
 import 'package:tournament/ui/page/match_page/match_cubit.dart';
 import 'package:tournament/ui/style/color.dart';
@@ -130,7 +132,12 @@ showTicket(
       ));
 }
 
-showWithdraw(BuildContext context, {bool lock}) async {
+showWithdraw(BuildContext context,
+    {bool lock,
+    @required TextEditingController card,
+    @required TextEditingController amount,
+    @required TextEditingController holder,
+    Function onPressed}) async {
   await showDialog(
       context: context,
       child: WillPopScope(
@@ -151,10 +158,18 @@ showWithdraw(BuildContext context, {bool lock}) async {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("card_id".tr()),
+                    child: Text(
+                      "card_id".tr(),
+                    ),
                   ),
                   CustomTextField(
                     hintText: "8600 **** **** ****",
+                    controller: card,
+                    textInputType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(16)
+                    ],
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -162,6 +177,7 @@ showWithdraw(BuildContext context, {bool lock}) async {
                   ),
                   CustomTextField(
                     hintText: "JOHN DOE",
+                    controller: holder,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -169,6 +185,11 @@ showWithdraw(BuildContext context, {bool lock}) async {
                   ),
                   CustomTextField(
                     hintText: "MIN. UZS 5000",
+                    controller: amount,
+                    textInputType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                   ),
                 ],
               ),
@@ -178,7 +199,7 @@ showWithdraw(BuildContext context, {bool lock}) async {
                 "withdraw".tr(),
                 style: Style.defaultText,
               ),
-              onPressed: () {},
+              onPressed: onPressed,
               width: double.infinity,
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(8),
@@ -191,23 +212,23 @@ showWithdraw(BuildContext context, {bool lock}) async {
       ));
 }
 
-showSmsCode(
-  BuildContext context,MatchCubit bloc
-) async {
+showSmsCode(BuildContext context, MatchCubit bloc) async {
   await showDialog(
       context: context,
       builder: (BuildContext newContext) {
-        // return SmsCodeVerifaction();
         return MultiBlocProvider(
           providers: [
             BlocProvider(
-                create: (newContext) =>
-                    TimerBloc(Ticker(), bloc)),
+                create: (context) => TimerBloc(Ticker())
+                  ..add(TimerStarted(
+                      duration: bloc.state.card.result.wait ~/ 1000))),
+            BlocProvider(create: (context) => ResendSmsBloc()),
             BlocProvider(
-                create: (newContext) =>
-                    SendSmsCodeCubit(bloc,Repository.instance))
+                create: (context) =>
+                    SendSmsCodeCubit(bloc, Repository.instance)),
+            BlocProvider.value(value: context.bloc<MatchCubit>()),
           ],
-          child: SmsCodeVerifaction(bloc),
+          child: SmsCodeVerification(),
         );
       });
 }
@@ -249,7 +270,10 @@ showPayment(BuildContext context, TextEditingController expireDate,
                   ),
                   CustomTextField(
                     controller: cardNumber,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(16)
+                    ],
                     hintText: "8600 **** **** ****",
                   ),
                   Padding(
@@ -258,7 +282,15 @@ showPayment(BuildContext context, TextEditingController expireDate,
                   ),
                   CustomTextField(
                     controller: expireDate,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(4)
+                      // FilteringTextInputFormatter(
+                      //     // RegExp(r"^(([0-1]{1})([0-9]{1})\/([2-5]{1})([0-9]{1}))$"),
+                      //     // RegExp(r"^(0[1-9]{2}|1[0-2]{1})$"),
+                      //     RegExp(r"^(0[1-9]|1[0-2])([0-9]|[0-9])$"),
+                      //     allow: true)
+                    ],
                     hintText: "05/25",
                   ),
                   Padding(
@@ -266,6 +298,7 @@ showPayment(BuildContext context, TextEditingController expireDate,
                     child: Text("payment_amount".tr()),
                   ),
                   CustomTextField(
+                    readOnly: true,
                     controller: amount,
                     hintText: "MIN. UZS 5000",
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -328,6 +361,13 @@ showInfo(BuildContext context, {bool lock}) async {
               Text(
                 "FUTURE DEVELOPMENT",
                 style: Style.defaultText,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: SelectableText(
+                  "+998932499099",
+                  style: Style.defaultText,
+                ),
               ),
               SizedBox(
                 height: 10,

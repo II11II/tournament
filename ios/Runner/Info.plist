@@ -15,6 +15,10 @@
         </dict>
     </dict>
 </dict>
+<key>LSApplicationQueriesSchemes</key>
+<array>
+        <string>itms</string>
+</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

@@ -11,16 +11,15 @@ import 'package:tournament/ui/widget/pop_up.dart';
 import 'sign_up_cubit.dart';
 
 class SignUpPage extends StatelessWidget {
-  final loginField = TextEditingController();
+  final loginField = TextEditingController(text: "+998");
   final passwordField = TextEditingController();
-  final emailField = TextEditingController();
+  final pubgIdField = TextEditingController();
+  final fullNameController = TextEditingController();
   final passwordConfirmField = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery
-        .of(context)
-        .size;
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(
@@ -46,14 +45,10 @@ class SignUpPage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       FittedBox(
-                        child
-                            : Text(
+                        child: Text(
                           'sign_up'.tr(),
                           overflow: TextOverflow.ellipsis,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .headline3,
+                          style: Theme.of(context).textTheme.headline3,
                         ),
                       ),
                       SizedBox(
@@ -64,27 +59,24 @@ class SignUpPage extends StatelessWidget {
                         height: 32,
                       ),
                       CustomTextField(
-                        autovalidateMode:AutovalidateMode.onUserInteraction,
-                        hintText: "login".tr(),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        hintText: "phone_number".tr(),
+                        textInputType: TextInputType.phone,
                         controller: loginField,
                         validator:
-                        context
-                            .bloc<SignUpCubit>()
-                            .loginFieldValidator,
+                            context.bloc<SignUpCubit>().loginFieldValidator,
                       ),
                       SizedBox(
                         height: 8,
                       ),
                       CustomTextField(
                         hintText: "password".tr(),
-                        autovalidateMode:AutovalidateMode.onUserInteraction,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: passwordField,
                         textInputType: TextInputType.visiblePassword,
                         obscureText: true,
                         validator:
-                        context
-                            .bloc<SignUpCubit>()
-                            .passwordFieldValidator,
+                            context.bloc<SignUpCubit>().passwordFieldValidator,
                       ),
                       SizedBox(
                         height: 8,
@@ -94,7 +86,7 @@ class SignUpPage extends StatelessWidget {
                         hintText: "confirm_password".tr(),
                         textInputType: TextInputType.visiblePassword,
                         obscureText: true,
-                        autovalidateMode:AutovalidateMode.onUserInteraction,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: context
                             .bloc<SignUpCubit>()
                             .passwordConfirmFieldValidator,
@@ -103,27 +95,23 @@ class SignUpPage extends StatelessWidget {
                         height: 8,
                       ),
                       CustomTextField(
-                        controller: emailField,
-                        autovalidateMode:AutovalidateMode.onUserInteraction,
-                        hintText: "email".tr(),
+                        controller: pubgIdField,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        hintText: "PUBG ID",
                         textInputType: TextInputType.emailAddress,
                         validator:
-                        context
-                            .bloc<SignUpCubit>()
-                            .emailFieldValidator,
+                            context.bloc<SignUpCubit>().pubgFieldValidator,
                       ),
                       SizedBox(
                         height: 8,
                       ),
                       CustomTextField(
-                        controller: emailField,
-                        autovalidateMode:AutovalidateMode.onUserInteraction,
-                        hintText: "PUBG ID",
-                        textInputType: TextInputType.emailAddress,
+                        controller: fullNameController,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        hintText: "full_name".tr(),
+                        textInputType: TextInputType.name,
                         validator:
-                        context
-                            .bloc<SignUpCubit>()
-                            .emailFieldValidator,
+                            context.bloc<SignUpCubit>().nameValidator,
                       ),
                       SizedBox(
                         height: 20,
@@ -132,16 +120,16 @@ class SignUpPage extends StatelessWidget {
                         listener: (context, state) {
                           if (state.state == NetworkState.LOADED) {
                             Navigator.of(context, rootNavigator: true).pop();
+                            Navigator.of(context).popUntil((route) => route.isFirst);
                             Navigator.pushReplacement(
+
                                 context,
                                 CupertinoPageRoute(
                                     builder: (BuildContext context) =>
                                         MainPage()));
-                          }
-                          else if (state.state == NetworkState.LOADING) {
+                          } else if (state.state == NetworkState.LOADING) {
                             showLoading(context);
-                          }
-                           else {
+                          } else {
                             if (Navigator.of(context, rootNavigator: true)
                                 .canPop()) {
                               Navigator.of(context, rootNavigator: true).pop();
@@ -151,34 +139,32 @@ class SignUpPage extends StatelessWidget {
                           }
                         },
                         listenWhen: (p, c) => p.state != c.state,
-                        builder: (context, state) =>
-                            CustomButton(
-                              colors: !state.isButtonActive
-                                  ? [
-                                Colors.grey,
-                                Colors.grey,
-                              ]
-                                  : null,
-                              height: 55,
-                              text: "sign_up".tr(),
-                              onPressed: !state.isButtonActive
-                                  ? null
-                                  : () {
-                                context.bloc<SignUpCubit>().register(
-                                    loginField.text,
-                                    passwordField.text,
-                                    emailField.text);
-                              },
-                            ),
+                        builder: (context, state) => CustomButton(
+                          colors: !state.isButtonActive
+                              ? [
+                                  Colors.grey,
+                                  Colors.grey,
+                                ]
+                              : null,
+                          height: 55,
+                          text: "sign_up".tr(),
+                          onPressed: !state.isButtonActive
+                              ? null
+                              : () {
+                                  context.bloc<SignUpCubit>().register(
+                                      loginField.text,
+                                      passwordField.text,
+                                      pubgIdField.text,
+                                      fullNameController.text,
+                                  );
+                                },
+                        ),
                       )
                     ],
                   ),
                 ),
               ),
-              MediaQuery
-                  .of(context)
-                  .viewInsets
-                  .bottom == 0
+              MediaQuery.of(context).viewInsets.bottom == 0
                   ? signUp(context)
                   : Container()
             ],

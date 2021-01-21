@@ -30,7 +30,7 @@
   "balance": "Balance",
   "revenue": "Revenue",
   "matches": "Matches",
-  "pubg_username": "PUBG USERNAME:",
+  "pubg_username": "PHONE:",
   "match_ticket": "MATCH TICKET",
   "match_id": "Match ID",
   "match_instructions": "Match instructions",
@@ -74,7 +74,13 @@
   "expire_date": "Expire date",
   "payment_amount": "Payment amount",
   "pay": "Pay",
-  "invalid_card_credentials": "Invalid card credentials"
-
-
+  "invalid_card_credentials": "Invalid card credentials",
+  "phone_number": "Phone number",
+  "success_payment": "Successful payment",
+  "payment": "Payment",
+  "name_validator": "Enter your name",
+  "full_name": "Full name",
+  "invalid_credentials": "Invalid credentials",
+  "application_accepted": "Your application is accepted",
+  "time_tournament": "Starting time"
 }

@@ -15,8 +15,10 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   Future recoverPasswordByEmail(String email) async {
     try {
       emit(ForgetPasswordState.copyWith(state, state: NetworkState.LOADING));
-      throw InvalidCodeException();
+
       await repo.resetPassword(email);
+      emit(ForgetPasswordState.copyWith(state, state: NetworkState.LOADING));
+
     } on InvalidTokenException catch (e) {
       emit(ForgetPasswordState.copyWith(state, state: NetworkState.INVALID_TOKEN));
     } on ServerErrorException catch (e) {
@@ -37,7 +39,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
 
   String loginValidator(String text) {
     if (text.contains(RegExp(
-        r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+        r"^\+[0-9]{12}",
         caseSensitive: false,
         multiLine: false))) {
       emit(ForgetPasswordState.copyWith(state, isButtonActive: true));

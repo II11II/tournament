@@ -48,6 +48,7 @@ class LoginPage extends StatelessWidget {
                       ),
                       CustomTextField(
                         hintText: 'login'.tr(),
+
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         controller: bloc.loginField,
                         validator:
@@ -136,23 +137,23 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              OutlineButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                            builder: (BuildContext context) => BlocProvider(
-                                create: (context) => ForgetPasswordCubit(),
-                                child: ForgetPasswordPage())));
-                  },
-                  color: Colors.white.withAlpha(100),
-                  child: Text(
-                    "${'forget_password'.tr()} ?",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18),
-                  )),
+              // OutlineButton(
+              //     onPressed: () {
+              //       Navigator.push(
+              //           context,
+              //           CupertinoPageRoute(
+              //               builder: (BuildContext context) => BlocProvider(
+              //                   create: (context) => ForgetPasswordCubit(),
+              //                   child: ForgetPasswordPage())));
+              //     },
+              //     color: Colors.white.withAlpha(100),
+              //     child: Text(
+              //       "${'forget_password'.tr()} ?",
+              //       style: TextStyle(
+              //           color: Colors.white,
+              //           fontWeight: FontWeight.bold,
+              //           fontSize: 18),
+              //     )),
               Text(
                 "not_registered".tr(),
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),

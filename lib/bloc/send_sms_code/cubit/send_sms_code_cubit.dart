@@ -19,9 +19,14 @@ class SendSmsCodeCubit extends Cubit<SendSmsCodeState> {
   final MatchCubit _cubit;
   final log=Logger();
   Future checkSmsCode(String smsCode) async {
+    await Future.delayed(Duration.zero);
+    emit( SendSmsCodeState(NetworkState.LOADING,
+        "" ));
     try {
       await _repository.checkSmsCode(
-        smsCode, _cubit.state.card.token, _cubit.state.amount);
+        smsCode, _cubit.state.card.token, _cubit.state.tournament.id.toString());
+      emit( SendSmsCodeState(NetworkState.LOADED,
+          "success_payment".tr() ));
     } on ServerErrorException catch (e) {
       emit( SendSmsCodeState(NetworkState.SERVER_ERROR,
           "server_error".tr() ));

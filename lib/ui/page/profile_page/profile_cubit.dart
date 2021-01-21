@@ -12,32 +12,31 @@ part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileState());
-  final Repository repository=Repository.instance;
-  final log =Logger();
+  final Repository repository = Repository.instance;
+  final log = Logger();
+
   Future init() async {
     try {
-      emit(state.copyWith(state: NetworkState.LOADING,));
+      emit(state.copyWith(
+        state: NetworkState.LOADING,
+      ));
       Player profile = await repository.player();
       log.d(profile);
-      emit(state.copyWith(
-          state: NetworkState.LOADED, player: profile));
+      emit(state.copyWith(state: NetworkState.LOADED, player: profile));
     } on ServerErrorException catch (e) {
       emit(state.copyWith(
-          message: "server_error".tr(),
-          state: NetworkState.SERVER_ERROR));
+          message: "server_error".tr(), state: NetworkState.SERVER_ERROR));
 
       log.d(e);
     } on InvalidTokenException catch (e) {
       await repository.removeUserToken();
       emit(state.copyWith(
-          message: "invalid_token".tr(),
-          state: NetworkState.INVALID_TOKEN));
+          message: "invalid_token".tr(), state: NetworkState.INVALID_TOKEN));
 
       log.d(e);
     } on SocketException catch (e) {
       emit(state.copyWith(
-          message: "no_connection".tr(),
-          state: NetworkState.NO_CONNECTION));
+          message: "no_connection".tr(), state: NetworkState.NO_CONNECTION));
 
       log.d(e);
     } on Exception catch (e) {
@@ -47,4 +46,5 @@ class ProfileCubit extends Cubit<ProfileState> {
       log.d(e);
     }
   }
+
 }

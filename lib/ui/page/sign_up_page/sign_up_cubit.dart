@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:logger/logger.dart';
 import 'package:tournament/exception/exception.dart';
 import 'package:tournament/repository/repository.dart';
 import 'package:tournament/ui/state/network_state.dart';
@@ -11,15 +12,16 @@ part 'sign_up_state.dart';
 class SignUpCubit extends Cubit<SignUpState> {
   SignUpCubit() : super(SignUpState());
   final Repository repo = Repository.instance;
+final log=Logger();
+  Future register(String phone, String password, String pubgId,String fullName) async {
 
-  Future register(String nick, String password, String email) async {
     try {
       emit(SignUpState.copyWith(
         state,
         state: NetworkState.LOADING,
       ));
-      await repo.registration(nick, email, password);
-
+     String token= await repo.registration(phone,  password,pubgId,fullName);
+      await repo.setUserToken(token);
       emit(SignUpState.copyWith(
         state,
         state: NetworkState.LOADED,
@@ -30,10 +32,12 @@ class SignUpCubit extends Cubit<SignUpState> {
         message: "user_exist".tr(),
         state: NetworkState.USER_EXISTENCE,
       ));
-      print(state.state);
+      log.d(e);
+
     } on ServerErrorException catch (e) {
       emit(SignUpState.copyWith(state,
           message: "server_error".tr(), state: NetworkState.SERVER_ERROR));
+      log.d(e);
     } on SocketException catch (e) {
       emit(SignUpState.copyWith(state,
           message: "no_connection".tr(), state: NetworkState.NO_CONNECTION));
@@ -88,14 +92,13 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
-  String emailFieldValidator(String text) {
-    if (text.contains(RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-        caseSensitive: false, multiLine: false))) {
-      emit(SignUpState.copyWith(state, isEmptyEmailField: false));
+  String pubgFieldValidator(String text) {
+    if (text.isNotEmpty) {
+      emit(SignUpState.copyWith(state, isEmptyPubgField: false));
       button();
       return null;
     } else {
-      emit(SignUpState.copyWith(state, isEmptyEmailField: true));
+      emit(SignUpState.copyWith(state, isEmptyPubgField: true));
       button();
       return 'email_validation_info'.tr();
     }
@@ -105,13 +108,29 @@ class SignUpCubit extends Cubit<SignUpState> {
     if (RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$')
             .hasMatch(state.passwordField) &&
         state.passwordField == state.confirmPasswordField &&
-        !state.isEmptyEmailField &&
+        !state.isEmptyPubgField &&
+        !state.isEmptyNameField &&
         !state.isEmptyLoginField) {
+
+
       if (!state.isButtonActive)
         emit(SignUpState.copyWith(state, isButtonActive: true));
     } else {
+
       if (state.isButtonActive)
         emit(SignUpState.copyWith(state, isButtonActive: false));
+    }
+  }
+
+  String nameValidator(String text) {
+    if (text.isNotEmpty) {
+      emit(SignUpState.copyWith(state, isEmptyNameField: false));
+      button();
+      return null;
+    } else {
+      emit(SignUpState.copyWith(state, isEmptyNameField: true));
+      button();
+      return 'name_validator'.tr();
     }
   }
 }

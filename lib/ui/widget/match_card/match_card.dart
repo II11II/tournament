@@ -134,7 +134,7 @@ class MatchCard extends StatelessWidget {
                                         );
                                       else if (state.networkState ==
                                               NetworkState.LOADED &&
-                                          state.isLiked)
+                                          !state.isLiked)
                                         return Icon(
                                           Icons.favorite_border,
                                           color: Colors.white,
